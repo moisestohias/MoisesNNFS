@@ -2,7 +2,7 @@
 ### This is my attempt to write a Deep Learning framework from scratch using only pure Numpy. 
 
 ### Inspiration:
-+ The awesome [ML-From-scratch] (https://github.com/eriklindernoren/ML-From-Scratch) by [Erik Linder-Norén](https://github.com/eriklindernoren)
++ The awesome [ML-From-scratch](https://github.com/eriklindernoren/ML-From-Scratch) by [Erik Linder-Norén](https://github.com/eriklindernoren)
 + The super elegant and simple implementation [python-neural-networks
 ](https://github.com/OmarAflak/python-neural-networks) by [Omar Aflak](https://github.com/OmarAflak?tab=repositories)
 
@@ -76,19 +76,6 @@ MLP.add(Dense(100))
 MLP.add(Tanh())
 MLP.add(Dense(100))
 MLP.add(Tanh())
-
-
-optimizer = SGD() 
-layers = [Reshape((1, 784), input_shape=(28, 28)),
-    Dense(30),
-    LeakyReLU(0.2),
-    Dense(16),
-    LeakyReLU(0.2),
-    Dense(30),
-    LeakyReLU(0.2),
-    Dense(784),
-    Reshape((28, 28)) ])
-MLP = Network(layers=layer, optimizer=optimizer, loss=MSE())
 
 MLP.fit(training_data, learning_rate=0.001, epochs=20, batch_size=32)
 
