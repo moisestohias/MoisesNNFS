@@ -1,2 +1,55 @@
 # MoisesNNFS
-This is my attempt to write a Deep Learning Neural Network framework from scratch using only pure Numpy. 
+### This is my attempt to write a Deep Learning framework from scratch using only pure Numpy. 
+
+## Guidlines: 
++ __init__ methods should never raise NotImplmentedErrro 
++ I don't wanna bother too much with type hinting, only use it where it's easy. 
++ The code must remain simple, I don't want to deal with exception and error handling.., and also makes the translate of code to anothr library easy.
+
+This document, represents my thought and ideas during the process of thinking about the implementation of NN framework from scratch using only Numpy, even though I have access to other people code, who have done the same thing before, but it's still hard, I am sure part of this is because this is the first time I've decided to work on something kind bigger than what I used to, which are basically just a single file scripts. So "It will get easier". 
+Another reason for why this is still hard, is because is just me overthinking it trying to account for many situations... Seriously creating a framework is hard, especially if you are a beginner.
+
+## Challenges: 😶 The biggest challenge is not just how to implement operations, but how to organize the code, such that the implementation won't come back to bite you later down the line.
+
+## TIPs: 
++ Use method instead of function call whenever possible for faster computation.
+
+## Helper function: As it's always the case you're going to need helper functions, 
+
+## Design philosophy:
+🥇 Modularity: everything should be modular and independent, this goes for layers, activation functions, losses, optimizers...
+
+## Main Components:
++ Network: A container for the layers, takes in: optimzers, losse
++ Layers: The building block for NN.
++ Losses: for measuring the error.
++ Optimzers: Responsible for updating layers paramters.
+
+## Layers: 
+Layers are the main building block of any NN framework, this one is no exception, everything is treated as layer, whether it's concrete NN layer (Dense/Conv2D/Pool...), utility layer (Dropout/Reshape) or Activation Function (The non-linearity part of the NN layer). 
+
++ NN concrete layers should be simple, they should only perform basic linear operations, the activation layer is the part responsible for the non-linearity during the forward pass. 
+Each NN concrete layer, must define two fundamental methods:
+    + forward : Take an input perform linear part returns output
+    + backward: Take the Accumulated Gradient (AG) from next layer, calculate the gradient w.r.t its weight and biases and passes them to the optimizer.
+    return accumulated gradient (aka error). 
+
+## Activation function: are treated as layer. They are responsible for:
+    + The non-linearity during the backward pass
+    + Calculate the accumulated gradient during the backward pass.
+
+## Weights: Doesn't matter how they are represented, you're going to perform the transpose during the backward pass anyway. I Like Micheal's implementation, basically rows represent nodes in the current layer.
+
+## The optimization part is performed by the optimizer (updating the net parameters )
+
+
+## Naming convention:
+all names are underscore separated.
+    losses: 
+    Activations: mse/mse_prime, cross_entropy/cross_entropy_prime/
+    p: y_pred : predicted/probability
+    y: y_truth: target 
+
+    input_size
+    output_size
+    layers_name
