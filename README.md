@@ -1,7 +1,7 @@
 # MoisesNNFS
 ### This is my attempt to write a Deep Learning framework from scratch using only pure Numpy. 
 
-#Warning: This not complete yet, in fact you can't build model, with this implementation,
+# Warning: This not complete yet, in fact you can't build model, with this implementation,
 
 ### Inspiration:
 + The awesome [ML-From-scratch](https://github.com/eriklindernoren/ML-From-Scratch) by [Erik Linder-Norén](https://github.com/eriklindernoren)
