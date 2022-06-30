@@ -1,29 +1,24 @@
 # MoisesNNFS
 ### This is my attempt to write a Deep Learning framework from scratch using only pure Numpy. 
 
-## Guidlines: 
-+ __init__ methods should never raise NotImplmentedErrro 
-+ I don't wanna bother too much with type hinting, only use it where it's easy. 
-+ The code must remain simple, I don't want to deal with exception and error handling.., and also makes the translate of code to anothr library easy.
+### Inspiration:
++ The awesome [ML-From-scratch] (https://github.com/eriklindernoren/ML-From-Scratch) by [Erik Linder-Norén](https://github.com/eriklindernoren)
++ The super elegant and simple implementation [python-neural-networks
+](https://github.com/OmarAflak/python-neural-networks) by [Omar Aflak](https://github.com/OmarAflak?tab=repositories)
 
-This document, represents my thought and ideas during the process of thinking about the implementation of NN framework from scratch using only Numpy, even though I have access to other people code, who have done the same thing before, but it's still hard, I am sure part of this is because this is the first time I've decided to work on something kind bigger than what I used to, which are basically just a single file scripts. So "It will get easier". 
-Another reason for why this is still hard, is because is just me overthinking it trying to account for many situations... Seriously creating a framework is hard, especially if you are a beginner.
+### Challenges: 
++ 😶 The biggest challenge is not just how to implement operations, but how to organize the code, such that the implementation won't come back to bite you later down the line.
 
-## Challenges: 😶 The biggest challenge is not just how to implement operations, but how to organize the code, such that the implementation won't come back to bite you later down the line.
-
-## TIPs: 
-+ Use method instead of function call whenever possible for faster computation.
-
-## Helper function: As it's always the case you're going to need helper functions, 
-
-## Design philosophy:
-🥇 Modularity: everything should be modular and independent, this goes for layers, activation functions, losses, optimizers...
+# Design philosophy:
++ 🥇 Modularity: everything should be modular and independent, this goes for layers, activation functions, losses, optimizers...
++ Simplicity: the code must remain simple, easy to read as much as possible, 
++ Efficiency: is not the start of the show here, but I've trying to optimize the code as much as possible without violation the second design philosophy (Simplicity)
 
 ## Main Components:
-+ Network: A container for the layers, takes in: optimzers, losse
++ Network: A container for the layers, takes in: optimizes, loss
 + Layers: The building block for NN.
 + Losses: for measuring the error.
-+ Optimzers: Responsible for updating layers paramters.
++ Optimzers: Responsible for updating layers parameters.
 
 ## Layers: 
 Layers are the main building block of any NN framework, this one is no exception, everything is treated as layer, whether it's concrete NN layer (Dense/Conv2D/Pool...), utility layer (Dropout/Reshape) or Activation Function (The non-linearity part of the NN layer). 
@@ -38,18 +33,79 @@ Each NN concrete layer, must define two fundamental methods:
     + The non-linearity during the backward pass
     + Calculate the accumulated gradient during the backward pass.
 
-## Weights: Doesn't matter how they are represented, you're going to perform the transpose during the backward pass anyway. I Like Micheal's implementation, basically rows represent nodes in the current layer.
+## Weights: 
+Doesn't matter how they are represented, you're going to perform the transpose during the backward pass anyway. I Like Micheal's implementation, basically rows represent nodes in the current layer.
 
-## The optimization part is performed by the optimizer (updating the net parameters )
+## Optimizers:
+The optimization part is performed by the optimizer (updating the net parameters )
 
 
 ## Naming convention:
 all names are underscore separated.
     losses: 
-    Activations: mse/mse_prime, cross_entropy/cross_entropy_prime/
+    Activation: mse/mse_prime, cross_entropy/cross_entropy_prime/
     p: y_pred : predicted/probability
     y: y_truth: target 
 
     input_size
     output_size
     layers_name
+
+## Guidlines: 
++ \__init\__ methods should never raise NotImplmentedErrro 
++ I don't wanna bother too much with type hinting, only use it where it's easy. 
++ The code must remain simple, I don't want to deal with exception and error handling.., and also makes the translate of code to anothr library easy.
+
+## TIPs:
++ Use method instead of function call whenever possible for faster computation.
+
+## Helper function: 
+As it's always the case you're going to need helper functions, since there will be many utils helper function, they should be organized into data manipulation utils, and misc utils.
+
+
+```python
+from MoisesNNFS.layers import Dense, Reshape
+from MoisesNNFS.activatios import Tanh
+from MoisesNNFS.losses import MSE
+from MoisesNNFS.opimizers import SGD
+from MoisesNNFS.Network import Network
+
+MLP = Network(optimizer=SGD(learning_rate=0.001, epochs=20, batch_size=32), loss=MSE())
+MLP.add(Reshape(np.product(data.shape),1), (data.shape))
+MLP.add(Dense(100))
+MLP.add(Tanh())
+MLP.add(Dense(100))
+MLP.add(Tanh())
+
+
+optimizer = SGD() 
+layers = [Reshape((1, 784), input_shape=(28, 28)),
+    Dense(30),
+    LeakyReLU(0.2),
+    Dense(16),
+    LeakyReLU(0.2),
+    Dense(30),
+    LeakyReLU(0.2),
+    Dense(784),
+    Reshape((28, 28)) ])
+MLP = Network(layers=layer, optimizer=optimizer, loss=MSE())
+
+MLP.fit(training_data, learning_rate=0.001, epochs=20, batch_size=32)
+
+```
+
+```python
+optimizer = SGD() 
+layers = [Reshape((1, 784), input_shape=(28, 28)),
+    Dense(30),
+    LeakyReLU(0.2),
+    Dense(16),
+    LeakyReLU(0.2),
+    Dense(30),
+    LeakyReLU(0.2),
+    Dense(784),
+    Reshape((28, 28)) ])
+MLP = Network(layers=layer, optimizer=optimizer, loss=MSE())
+
+MLP.fit(training_data, learning_rate=0.001, epochs=20, batch_size=32)
+```
