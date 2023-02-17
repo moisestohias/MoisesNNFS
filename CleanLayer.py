@@ -1,8 +1,9 @@
 import numpy as np
 from scipy import signal
-
+import time
 """
 Calculate the size of the output layer:
+kvirajdatt.medium.com/calculating-output-dimensions-in-a-cnn-for-convolution-and-pooling-layers-with-keras-682960c73870
     + I (ixi)    : The input dimensions of the image
     + k (kxk)    : The size of filter/kernel
     + S (integer): Strides
@@ -25,16 +26,18 @@ class MaxPool2d(Layer):
         self.input_shape = input_shape
         self.channels, self.Xh, self.Xw = input_shape
         self.Kh, self.Kw = kernel_size
+        # Pair number or Smaller
         self.output_shape = self.channels, self.Xh//self.Kh, self.Xw//self.Kw
     def forward(self, input):
         out = np.zeros(self.output_shape)
         dtypeSize = input.itemsize # default stride along the first axis (column)
-        for indx, channel in enumerate(input):
+        for indx, channel in enumerate(input): # Indexing gives same speed as zip(input, out)
             out[indx] = np.lib.stride_tricks.as_strided(channel, shape=(self.Xh//self.Kh, self.Xw//self.Kw, self.Kh,self.Kw),
                        strides=(self.Xw*self.Kh*dtypeSize, self.Kw*dtypeSize,
                                 self.Xw//dtypeSize, dtypeSize)).max(axis=(-2,-1))
         return out
     def backward(self, output_gradient): return np.zeros(self.input_shape)
+
 
 class StridedMaxPool2d(Layer):
     def __init__(self, input_shape, kernel_size, stride):
@@ -61,7 +64,7 @@ class Dense(Layer):
         self.output_shape = output_shape, 1
         self.layers_name = self.__class__.__name__
 
-        lim = 1 / np.sqrt(input_shape)
+        lim = 1 / np.sqrt(input_shape) # Only # of input nodes to calculate the limit, bc that the input that saturate the neuron.
         self.weights  = np.random.uniform(-lim, lim, (output_shape, input_shape))
         self.bias = np.random.randn(output_shape, 1)
 
@@ -131,7 +134,7 @@ class Dropout(Layer):
     def backward(self, output_gradient):
         input_gradient = np.ones(self.input_shape)
         input_gradient[self.mask] = 0
-        return input_gradient, None
+        return input_gradient
 
 if __name__ == "__main__":
     lr = 0.001
@@ -139,45 +142,49 @@ if __name__ == "__main__":
 
     C1 = Conv2d(x.shape, 10, 3)
     C2 = Conv2d(C1.output_shape, 8, 3)
-    MP = MaxPool2d(C2.output_shape, (2,2))
-    C3 = Conv2d(MP.output_shape, 6, 3)
-    R = Reshape(C3.output_shape, np.prod(C3.output_shape))
+    MP1 = MaxPool2d(C2.output_shape, (2,2))
+    ConvDrop = Dropout(MP1.output_shape, 0.5)
+    C3 = Conv2d(ConvDrop.output_shape, 6, 3)
+    R = Reshape(C3.output_shape, 6*22*22)
     D1 = Dense(R.output_shape, 100)
+    DenseDrop = Dropout((100,1), 0.2)
     D2 = Dense(100, 10)
 
     x1 = C1(x)
     x2 = C2(x1)
-    x2mp = MP(x2)
-    x3 = C3(x2mp)
+    x2Pooled = MP1(x2)
+    x2PooledDroped = ConvDrop(x2Pooled)
+    x3 = C3(x2PooledDroped)
     x4 = R(x3)
-    x5 = D1(x4)
-    x6 = D2(x5)
+    # x5 = D1(x4)
+    # x5 = DenseDrop(x5)
+    # x6 = D2(x5)
 
     print("# Forward===========")
     print("Input:",x.shape)
     print(x1.shape)
     print(x2.shape)
-    print(x2mp.shape)
+    print(x2Pooled.shape)
+    print(x2PooledDroped.shape)
     print(x3.shape)
-    print(x4.shape)
-    print(x5.shape)
-    print(x6.shape)
-    x_back1 = D2.backward(x6, lr)
-    x_back2 = D1.backward(x_back1, lr)
-    x_back3 = R.backward( x_back2, lr)
-    x_back4 = C3.backward(x_back3, lr)
-    x_back4mp = MP.backward(x_back4)
-    x_back5 = C2.backward(x_back4mp, lr)
-    x_back6 = C1.backward(x_back5, lr)
+    # print(x4.shape)
+    # print(x5.shape)
+    # print(x6.shape)
 
-    print("Backward===========")
-    # print("Dense---")
-    print(x_back1.shape)
-    print(x_back2.shape)
-    # print("Reshape---")
-    print(x_back3.shape)
+    # x_back1 = D2.backward(x6, lr)
+    # x_back2 = D1.backward(x_back1, lr)
+    # x_back3 = R.backward( x_back2, lr)
+    # x_back4 = C3.backward(x_back3, lr)
+    # x_back5 = C2.backward(x_back4, lr)
+    # x_back6 = C1.backward(x_back5, lr)
+
+    # print("# Backward===========")
+    # print("# Dense---")
+    # print(x_back1.shape)
+    # print(x_back2.shape)
+    # print("# Reshape---")
+    # print(x_back3.shape)
     # print("# Conv---")
-    print(x_back4.shape)
-    # print("Unpooling",x_back4mp.shape)
-    print(x_back5.shape)
-    print(x_back6.shape)
+    # print(x_back4.shape)
+    # print(x_back5.shape)
+    # print(x_back6.shape)

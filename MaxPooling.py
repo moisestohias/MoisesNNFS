@@ -1,5 +1,12 @@
 # MaxPooling.py
 
+# https://stackoverflow.com/questions/41699513/how-to-update-the-weights-of-a-deconvolutional-layer
+# https://stackoverflow.com/questions/34254679/how-can-i-implement-deconvolution-layer-for-a-cnn-in-numpy
+# https://stackoverflow.com/questions/40615034/understanding-scipy-deconvolve
+# https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.deconvolve.html
+# https://stackoverflow.com/questions/41699513/how-to-update-the-weights-of-a-deconvolutional-layer
+# https://github.com/many-facedgod/Numpy-Atrous-Transposed-CNN
+
 # https://towardsdatascience.com/advanced-numpy-master-stride-tricks-with-25-illustrated-exercises-923a9393ab20
 # https://remykarem.medium.com/
 # https://medium.com/analytics-vidhya/simple-cnn-using-numpy-part-iii-relu-max-pooling-softmax-c03a3377eaf2
